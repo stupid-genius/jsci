@@ -5,8 +5,11 @@ This is a very basic LL(1) grammar parser capable of working on any grammar it i
 TODO:
 ============
 -epsilon rules just use last rule--can we match instead?
+
 -add code to Array.prototype to avoid custom objects (map, stack, etc.)
+
 -find better handling of overlapping token patterns
+
 -add caching to first and follow
 
 Demo:
