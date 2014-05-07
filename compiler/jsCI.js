@@ -154,10 +154,6 @@ function jsCI(terms, symbol, rules)
 			indicatedRule = epsilonRule;
 		}
 
-		if(false && indicatedRule!==undefined && indicatedRule['rule'][0]==='if_stmt')
-		{
-			var testI = 4;
-		}
 		return indicatedRule;	// there can be only one
 	}
 	/*
