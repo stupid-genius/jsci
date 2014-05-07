@@ -2,11 +2,12 @@
 *	JavaScript Scanner
 *	author: Allen Ng
 ***************************************/
+module.exports =
 function jsScanner(string)
 {
 // private
 	var sString = string;
-	var tokens = new jsMap();
+	var tokens = new Array();
 	var iCurIndex = 0;
 // public
 	this.curToken;
@@ -14,8 +15,8 @@ function jsScanner(string)
 
 	this.addToken = function(patternName, pattern)
 	{
-		if(!tokens.contains(patternName))
-			tokens.add(patternName, pattern);
+		if(tokens.indexOf(patternName)===-1)
+			tokens[patternName]= pattern;
 		else
 			throw "Token already added.";
 	}
@@ -23,14 +24,14 @@ function jsScanner(string)
 	this.hasNext = function()
 	{
 		var bFound = false;
-		var keys = tokens.keys();
+		var keys = Object.keys(tokens);
 		for(var t in keys)
 		{
 			if(keys[t].search(/^&/)!=-1)
 			{
 				continue;
 			}
-			if(this.hasNextExp(tokens.item(keys[t])))
+			if(this.hasNextExp(tokens[keys[t]]))
 			{
 				this.curTokenType = keys[t];
 				bFound = true;
@@ -44,7 +45,7 @@ function jsScanner(string)
 			{
 				continue;
 			}
-			if(this.hasNextExp(tokens.item(keys[t])))
+			if(this.hasNextExp(tokens[keys[t]]))
 			{
 				this.curTokenType = keys[t];
 				bFound = true;
@@ -55,7 +56,7 @@ function jsScanner(string)
 	}
 	this.hasNextPat = function(patternName)
 	{
-		return this.hasNextExp(tokens.item(patternName));
+		return this.hasNextExp(tokens[patternName]);
 	}
 	this.hasNextExp = function(pattern)
 	{
@@ -77,11 +78,11 @@ function jsScanner(string)
 */
 	this.next = function()
 	{
-		return this.nextExp(tokens.item(this.curTokenType));
+		return this.nextExp(tokens[this.curTokenType]);
 	}
 	this.nextPat = function(patternName)
 	{
-		return this.nextExp(tokens.item(patternName));
+		return this.nextExp(tokens[patternName]);
 	}
 	this.nextExp = function(pattern)
 	{
@@ -92,4 +93,4 @@ function jsScanner(string)
 			iCurIndex += sString.substring(iCurIndex).match(/^\s+/)[0].length;
 		return sMatch;
 	}
-}
+};

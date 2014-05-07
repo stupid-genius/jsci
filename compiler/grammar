@@ -1,33 +1,34 @@
+module.exports =
 {
-	"program":
-	[
-		{
-			"rule": ["stmt-sequence"],
-			"semantics": "function(stack)
+  program:
+    [
+  	{
+			rule: ["stmt_sequence"],
+			semantics: function(stack)
 			{
 				return stack.shift()(stack);
-			}"
+			}
 		}
 	],
-	"stmt-sequence":
+	stmt_sequence:
 	[
 		{
-			"rule":	["statement", "_stmt-sequence"],
-			"semantics": "function(stack)
+			rule:	["statement", "_stmt_sequence"],
+			semantics: function(stack)
 			{
 				var stmt = stack.shift();
 				var out = stmt(stack);
 				var stmtSeq = stack.shift();
 				out += stmtSeq(stack);
 				return out;
-			}"
+			}
 		}
 	],
-	"_stmt-sequence":
+	_stmt_sequence:
 	[
 		{
-			"rule": ["EOS", "statement", "_stmt-sequence"],
-			"semantics": "function(stack)
+			rule: ["EOS", "statement", "_stmt_sequence"],
+			semantics: function(stack)
 			{
 				stack.shift();
 				var stmt = stack.shift();
@@ -35,59 +36,59 @@
 				var stmtSeq = stack.shift();
 				out += stmtSeq(stack);
 				return out;
-			}"
+			}
 		},
 		{
-			"rule": ["&amp;"],
-			"semantics": "function(stack)
+			rule: ["&"],
+			semantics: function(stack)
 			{
-				return \"\";
-			}"
+				return "";
+			}
 		}
 	],
-	"statement":
+	statement:
 	[
 		{
-			"rule": ["if-stmt"],
-			"semantics": "function(stack)
+			rule: ["if_stmt"],
+			semantics: function(stack)
 			{
 				return stack.shift()(stack);
-			}"
+			}
 		},
 		{
-			"rule": ["repeat-stmt"],
-			"semantics": "function(stack)
+			rule: ["repeat_stmt"],
+			semantics: function(stack)
 			{
 				return stack.shift()(stack) + ';';
-			}"
+			}
 		},
 		{
-			"rule": ["assign-stmt"],
-			"semantics": "function(stack)
+			rule: ["assign_stmt"],
+			semantics: function(stack)
 			{
 				return stack.shift()(stack) + ';';
-			}"
+			}
 		},
 		{
-			"rule": ["read-stmt"],
-			"semantics": "function(stack)
+			rule: ["read_stmt"],
+			semantics: function(stack)
 			{
 				return stack.shift()(stack) + ';';
-			}"
+			}
 		},
 		{
-			"rule": ["write-stmt"],
-			"semantics": "function(stack)
+			rule: ["write_stmt"],
+			semantics: function(stack)
 			{
 				return stack.shift()(stack) + ';';
-			}"
+			}
 		}
 	],
-	"if-stmt":
+	if_stmt:
 	[
 		{
-			"rule": ["IF", "exp", "THEN", "stmt-sequence", "_if-stmt"],
-			"semantics": "function(stack)
+			rule: ["IF", "exp", "THEN", "stmt_sequence", "_if_stmt"],
+			semantics: function(stack)
 			{
 				stack.shift();
 				var out = 'if';
@@ -99,22 +100,22 @@
 				var ifStmt = stack.shift();
 				out += ifStmt(stack);
 				return out;
-			}"
+			}
 		}
 	],
-	"_if-stmt":
+	_if_stmt:
 	[
 		{
-			"rule": ["END"],
-			"semantics": "function(stack)
+			rule: ["END"],
+			semantics: function(stack)
 			{
 				stack.shift();
-				return \"\";
-			}"
+				return "";
+			}
 		},
 		{
-			"rule": ["ELSE", "stmt-sequence", "END"],
-			"semantics": "function(stack)
+			rule: ["ELSE", "stmt_sequence", "END"],
+			semantics: function(stack)
 			{
 				stack.shift();
 				var out = 'else';
@@ -122,14 +123,14 @@
 				out += '{' + stmtSeq(stack) + '}';
 				stack.shift();
 				return out;
-			}"
+			}
 		}
 	],
-	"repeat-stmt":
+	repeat_stmt:
 	[
 		{
-			"rule": ["REPEAT", "stmt-sequence", "UNTIL", "exp"],
-			"semantics": "function(stack)
+			rule: ["REPEAT", "stmt_sequence", "UNTIL", "exp"],
+			semantics: function(stack)
 			{
 				stack.shift();
 				var out = 'do';
@@ -140,77 +141,77 @@
 				var exp = stack.shift();
 				out += '(!(' + exp(stack) + '))';
 				return out;
-			}"
+			}
 		}
 	],
-	"assign-stmt":
+	assign_stmt:
 	[
 		{
-			"rule": ["$IDENTIFIER", "ASSIGN", "exp"],
-			"semantics": "function(stack)
+			rule: ["$IDENTIFIER", "ASSIGN", "exp"],
+			semantics: function(stack)
 			{
 				var out = stack.shift() + '=';
 				stack.shift();
 				var exp = stack.shift();
 				out += exp(stack);
 				return out;
-			}"
+			}
 		}
 	],
-	"read-stmt":
+	read_stmt:
 	[
 		{
-			"rule": ["READ", "$IDENTIFIER"],
-			"semantics": "function(stack)
+			rule: ["READ", "$IDENTIFIER"],
+			semantics: function(stack)
 			{
 				stack.shift();
 				return stack.shift() + '=jsIn()';
-			}"
+			}
 		}
 	],
-	"write-stmt":
+	write_stmt:
 	[
 		{
-			"rule": ["WRITE", "exp"],
-			"semantics": "function(stack)
+			rule: ["WRITE", "exp"],
+			semantics: function(stack)
 			{
 				stack.shift();
 				var out = 'jsOut';
 				var exp = stack.shift();
 				out += '(' + exp(stack) + ')';
 				return out;
-			}"
+			}
 		}
 	],
-	"exp":
+	exp:
 	[
 		{
-			"rule": ["simple-exp", "_exp"],
-			"semantics": "function(stack)
+			rule: ["simple_exp", "_exp"],
+			semantics: function(stack)
 			{
 				var simpexp = stack.shift();
 				var out = simpexp(stack);
 				var exp = stack.shift();
 				out += exp(stack);
 				return out;
-			}"
+			}
 		},
 		{
-			"rule": ["QT", "string"],
-			"semantics": "function(stack)
+			rule: ["QT", "string"],
+			semantics: function(stack)
 			{
 				var out = stack.shift();
 				var string = stack.shift();
 				out += string(stack);
 				return out;
-			}"
+			}
 		}
 	],
-	"string":
+	string:
 	[
 		{
-			"rule": ["$TEXT", "string"],
-			"semantics": "function(stack)
+			rule: ["$TEXT", "string"],
+			semantics: function(stack)
 			{
 				var out = stack.shift();
 				var string = stack.shift();
@@ -219,21 +220,21 @@
 					out += ' ';
 				out += temp;
 				return out;
-			}"
+			}
 		},
 		{
-			"rule": ["QT"],
-			"semantics": "function(stack)
+			rule: ["QT"],
+			semantics: function(stack)
 			{
 				return stack.shift();
-			}"
+			}
 		}
 	],
-	"_exp":
+	_exp:
 	[
 		{
-			"rule": ["comparison-op", "simple-exp", "_exp"],
-			"semantics": "function(stack)
+			rule: ["comparison_op", "simple_exp", "_exp"],
+			semantics: function(stack)
 			{
 				var compOp = stack.shift();
 				var out = compOp(stack);
@@ -242,60 +243,60 @@
 				var exp = stack.shift();
 				out += exp(stack);
 				return out;
-			}"
+			}
 		},
 		{
-			"rule": ["&amp;"],
-			"semantics": "function(stack)
+			rule: ["&"],
+			semantics: function(stack)
 			{
-				return \"\";
-			}"
+				return "";
+			}
 		}
 	],
-	"comparison-op":
+	comparison_op:
 	[
 		{
-			"rule": ["GT"],
-			"semantics": "function(stack)
+			rule: ["GT"],
+			semantics: function(stack)
 			{
 				return stack.shift();
-			}"
+			}
 		},
 		{
-			"rule": ["LT"],
-			"semantics": "function(stack)
+			rule: ["LT"],
+			semantics: function(stack)
 			{
 				return stack.shift();
-			}"
+			}
 		},
 		{
-			"rule": ["EQ"],
-			"semantics": "function(stack)
+			rule: ["EQ"],
+			semantics: function(stack)
 			{
 				stack.shift();
 				return '==';
-			}"
+			}
 		}
 	],
-	"simple-exp":
+	simple_exp:
 	[
 		{
-			"rule": ["term", "_simple-exp"],
-			"semantics": "function(stack)
+			rule: ["term", "_simple_exp"],
+			semantics: function(stack)
 			{
 				var term = stack.shift();
 				var out = term(stack);
 				var simpexp = stack.shift();
 				out += simpexp(stack);
 				return out;
-			}"
+			}
 		}
 	],
-	"_simple-exp":
+	_simple_exp:
 	[
 		{
-			"rule": ["addop", "term", "_simple-exp"],
-			"semantics": "function(stack)
+			rule: ["addop", "term", "_simple_exp"],
+			semantics: function(stack)
 			{
 				var addop = stack.shift();
 				var out = addop(stack);
@@ -304,52 +305,52 @@
 				var simpexp = stack.shift();
 				out += simpexp(stack);
 				return out;
-			}"
+			}
 		},
 		{
-			"rule": ["&amp;"],
-			"semantics": "function(stack)
+			rule: ["&"],
+			semantics: function(stack)
 			{
-				return \"\";
-			}"
+				return "";
+			}
 		}
 	],
-	"addop":
+	addop:
 	[
 		{
-			"rule": ["ADD"],
-			"semantics": "function(stack)
+			rule: ["ADD"],
+			semantics: function(stack)
 			{
 				return stack.shift();
-			}"
+			}
 		},
 		{
-			"rule": ["SUB"],
-			"semantics": "function(stack)
+			rule: ["SUB"],
+			semantics: function(stack)
 			{
 				return stack.shift();
-			}"
+			}
 		}
 	],
-	"term":
+	term:
 	[
 		{
-			"rule": ["factor", "_term"],
-			"semantics": "function(stack)
+			rule: ["factor", "_term"],
+			semantics: function(stack)
 			{
 				var factor = stack.shift();
 				var out = factor(stack);
 				var term = stack.shift();
 				out += term(stack);
 				return out;
-			}"
+			}
 		}
 	],
-	"_term":
+	_term:
 	[
 		{
-			"rule": ["mulop", "factor", "_term"],
-			"semantics": "function(stack)
+			rule: ["mulop", "factor", "_term"],
+			semantics: function(stack)
 			{
 				var mulop = stack.shift();
 				var out = mulop(stack);
@@ -358,59 +359,59 @@
 				var term = stack.shift();
 				out += term(stack);
 				return out;
-			}"
+			}
 		},
 		{
-			"rule": ["&amp;"],
-			"semantics": "function(stack)
+			rule: ["&"],
+			semantics: function(stack)
 			{
-				return \"\";
-			}"
+				return "";
+			}
 		}
 	],
-	"mulop":
+	mulop:
 	[
 		{
-			"rule": ["MUL"],
-			"semantics": "function(stack)
+			rule: ["MUL"],
+			semantics: function(stack)
 			{
 				return stack.shift();
-			}"
+			}
 		},
 		{
-			"rule": ["DIV"],
-			"semantics": "function(stack)
+			rule: ["DIV"],
+			semantics: function(stack)
 			{
 				return stack.shift();
-			}"
+			}
 		}
 	],
-	"factor":
+	factor:
 	[
 		{
-			"rule": ["LP", "exp", "RP"],
-			"semantics": "function(stack)
+			rule: ["LP", "exp", "RP"],
+			semantics: function(stack)
 			{
 				var out = stack.shift();
 				var exp = stack.shift();
 				out += exp(stack);
 				out += stack.shift();
 				return out;
-			}"
+			}
 		},
 		{
-			"rule": ["$NUMBER"],
-			"semantics": "function(stack)
+			rule: ["$NUMBER"],
+			semantics: function(stack)
 			{
 				return stack.shift();
-			}"
+			}
 		},
 		{
-			"rule": ["$IDENTIFIER"],
-			"semantics": "function(stack)
+			rule: ["$IDENTIFIER"],
+			semantics: function(stack)
 			{
 				return stack.shift();
-			}"
+			}
 		}
 	]
 }

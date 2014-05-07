@@ -1,0 +1,17 @@
+write "Tiny powers";
+Accum := 0;
+Counter := 1;
+msgA := "Enter base";
+msgB := "Enter exponent";
+write msgA; read myVarA; write myVarA;
+write msgB; read myVarB; write myVarB;
+if myVarB > 0 then
+	Accum := myVarA;
+	repeat
+		Accum := Accum * myVarA;
+		Counter := Counter + 1
+	until Counter = myVarB;
+	write Accum
+else
+	write "ERROR"
+end
