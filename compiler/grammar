@@ -1,21 +1,16 @@
-module.exports =
 {
-  program:
-    [
-  	{
+	program: [
+		{
 			rule: ["stmt_sequence"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift()(stack);
 			}
 		}
 	],
-	stmt_sequence:
-	[
+	stmt_sequence: [
 		{
-			rule:	["statement", "_stmt_sequence"],
-			semantics: function(stack)
-			{
+			rule: ["statement", "_stmt_sequence"],
+			semantics: function(stack){
 				var stmt = stack.shift();
 				var out = stmt(stack);
 				var stmtSeq = stack.shift();
@@ -24,12 +19,10 @@ module.exports =
 			}
 		}
 	],
-	_stmt_sequence:
-	[
+	_stmt_sequence: [
 		{
 			rule: ["EOS", "statement", "_stmt_sequence"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				stack.shift();
 				var stmt = stack.shift();
 				var out = stmt(stack);
@@ -40,56 +33,47 @@ module.exports =
 		},
 		{
 			rule: ["&"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return "";
 			}
 		}
 	],
-	statement:
-	[
+	statement: [
 		{
 			rule: ["if_stmt"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift()(stack);
 			}
 		},
 		{
 			rule: ["repeat_stmt"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift()(stack) + ';';
 			}
 		},
 		{
 			rule: ["assign_stmt"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift()(stack) + ';';
 			}
 		},
 		{
 			rule: ["read_stmt"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift()(stack) + ';';
 			}
 		},
 		{
 			rule: ["write_stmt"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift()(stack) + ';';
 			}
 		}
 	],
-	if_stmt:
-	[
+	if_stmt: [
 		{
 			rule: ["IF", "exp", "THEN", "stmt_sequence", "_if_stmt"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				stack.shift();
 				var out = 'if';
 				var exp = stack.shift();
@@ -103,20 +87,17 @@ module.exports =
 			}
 		}
 	],
-	_if_stmt:
-	[
+	_if_stmt: [
 		{
 			rule: ["END"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				stack.shift();
 				return "";
 			}
 		},
 		{
 			rule: ["ELSE", "stmt_sequence", "END"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				stack.shift();
 				var out = 'else';
 				var stmtSeq = stack.shift();
@@ -126,12 +107,10 @@ module.exports =
 			}
 		}
 	],
-	repeat_stmt:
-	[
+	repeat_stmt: [
 		{
 			rule: ["REPEAT", "stmt_sequence", "UNTIL", "exp"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				stack.shift();
 				var out = 'do';
 				var stmtSeq = stack.shift();
@@ -144,12 +123,10 @@ module.exports =
 			}
 		}
 	],
-	assign_stmt:
-	[
+	assign_stmt: [
 		{
 			rule: ["$IDENTIFIER", "ASSIGN", "exp"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				var out = stack.shift() + '=';
 				stack.shift();
 				var exp = stack.shift();
@@ -158,23 +135,19 @@ module.exports =
 			}
 		}
 	],
-	read_stmt:
-	[
+	read_stmt: [
 		{
 			rule: ["READ", "$IDENTIFIER"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				stack.shift();
 				return stack.shift() + '=jsIn()';
 			}
 		}
 	],
-	write_stmt:
-	[
+	write_stmt: [
 		{
 			rule: ["WRITE", "exp"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				stack.shift();
 				var out = 'jsOut';
 				var exp = stack.shift();
@@ -183,12 +156,10 @@ module.exports =
 			}
 		}
 	],
-	exp:
-	[
+	exp: [
 		{
 			rule: ["simple_exp", "_exp"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				var simpexp = stack.shift();
 				var out = simpexp(stack);
 				var exp = stack.shift();
@@ -198,8 +169,7 @@ module.exports =
 		},
 		{
 			rule: ["QT", "string"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				var out = stack.shift();
 				var string = stack.shift();
 				out += string(stack);
@@ -207,12 +177,10 @@ module.exports =
 			}
 		}
 	],
-	string:
-	[
+	string: [
 		{
 			rule: ["$TEXT", "string"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				var out = stack.shift();
 				var string = stack.shift();
 				var temp = string(stack);
@@ -224,18 +192,15 @@ module.exports =
 		},
 		{
 			rule: ["QT"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift();
 			}
 		}
 	],
-	_exp:
-	[
+	_exp: [
 		{
 			rule: ["comparison_op", "simple_exp", "_exp"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				var compOp = stack.shift();
 				var out = compOp(stack);
 				var simpexp = stack.shift();
@@ -247,43 +212,36 @@ module.exports =
 		},
 		{
 			rule: ["&"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return "";
 			}
 		}
 	],
-	comparison_op:
-	[
+	comparison_op: [
 		{
 			rule: ["GT"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift();
 			}
 		},
 		{
 			rule: ["LT"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift();
 			}
 		},
 		{
 			rule: ["EQ"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				stack.shift();
 				return '==';
 			}
 		}
 	],
-	simple_exp:
-	[
+	simple_exp: [
 		{
 			rule: ["term", "_simple_exp"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				var term = stack.shift();
 				var out = term(stack);
 				var simpexp = stack.shift();
@@ -292,12 +250,10 @@ module.exports =
 			}
 		}
 	],
-	_simple_exp:
-	[
+	_simple_exp: [
 		{
 			rule: ["addop", "term", "_simple_exp"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				var addop = stack.shift();
 				var out = addop(stack);
 				var term = stack.shift();
@@ -309,35 +265,29 @@ module.exports =
 		},
 		{
 			rule: ["&"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return "";
 			}
 		}
 	],
-	addop:
-	[
+	addop: [
 		{
 			rule: ["ADD"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift();
 			}
 		},
 		{
 			rule: ["SUB"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift();
 			}
 		}
 	],
-	term:
-	[
+	term: [
 		{
 			rule: ["factor", "_term"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				var factor = stack.shift();
 				var out = factor(stack);
 				var term = stack.shift();
@@ -346,12 +296,10 @@ module.exports =
 			}
 		}
 	],
-	_term:
-	[
+	_term: [
 		{
 			rule: ["mulop", "factor", "_term"],
-			semantics: function(stack)
-			{
+			semantics: function(stack) {
 				var mulop = stack.shift();
 				var out = mulop(stack);
 				var factor = stack.shift();
@@ -363,35 +311,29 @@ module.exports =
 		},
 		{
 			rule: ["&"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return "";
 			}
 		}
 	],
-	mulop:
-	[
+	mulop: [
 		{
 			rule: ["MUL"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift();
 			}
 		},
 		{
 			rule: ["DIV"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift();
 			}
 		}
 	],
-	factor:
-	[
+	factor:	[
 		{
 			rule: ["LP", "exp", "RP"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				var out = stack.shift();
 				var exp = stack.shift();
 				out += exp(stack);
@@ -401,17 +343,15 @@ module.exports =
 		},
 		{
 			rule: ["$NUMBER"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift();
 			}
 		},
 		{
 			rule: ["$IDENTIFIER"],
-			semantics: function(stack)
-			{
+			semantics: function(stack){
 				return stack.shift();
 			}
 		}
 	]
-}
+};

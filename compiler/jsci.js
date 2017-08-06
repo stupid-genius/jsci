@@ -5,23 +5,23 @@
 *
 *	Author: Allen Ng
 ******************************************************
-*	terms	- array of tokens
+*	tokens	- array of tokens
 *	start	- start symbol of grammar
-*	rules	- grammar object in JSON format
+*	grammar	- grammar object in JSON format
 *****************************************************/
 /*
 This file is part of JavaScript Compiler Interpreter.
- 
+
 JavaScript Compiler Interpreter is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
- 
+
 JavaScript Compiler Interpreter is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 GNU General Public License for more details.
- 
+
 You should have received a copy of the GNU General Public License
 along with JavaScript Compiler Interpreter.  If not, see <http://www.gnu.org/licenses/>.
 */
@@ -31,45 +31,28 @@ along with JavaScript Compiler Interpreter.  If not, see <http://www.gnu.org/lic
 *	find better handling of overlapping token patterns
 *	add caching to first and follow
 */
-var jsScanner = require('./jsScanner.js');
-module.exports = 
-function jsCI(terms, symbol, rules)
-{
-// private
-	var start = symbol;
+function JSCI(tokens, start, grammar){
+	var variables = [];
+	var terminals = [];
+	var reserved = [];
 	var endofinput = "$";
-	var variables = new Array();
-	var terminals = new Array();
-	var reserved = new Array();
-	var grammar = rules;
 
-	// init
-	{
-		var tokens = terms;
-		for(var t in tokens)
-		{
-			terminals[t] = tokens[t];
-			if(t.charAt(0)!="$")
-				reserved.push(tokens[t]);
-		}
-		for(var v in grammar)
-		{
-			variables.push(v);
-		}
+	for(var t in tokens){
+		terminals[t] = tokens[t];
+		if(t.charAt(0)!=="$")
+			reserved.push(tokens[t]);
+	}
+	for(var v in grammar){
+		variables.push(v);
 	}
 
-	function match(a, t)
-	{
+	function match(a, t){
 		var result = false;
-		if(a.match(new RegExp(terminals[t])))
-		{
+		if(a.match(new RegExp(terminals[t]))){
 			result = true;
-			if(t.charAt(0)=="$")
-			{
-				for(var w in reserved)
-				{
-					if(a.match(new RegExp("^"+reserved[w]+"$")))
-					{
+			if(t.charAt(0)==="$"){
+				for(var w in reserved){
+					if(a.match(new RegExp("^"+reserved[w]+"$"))){
 						result = false;
 					}
 				}
@@ -77,27 +60,21 @@ function jsCI(terms, symbol, rules)
 		}
 		return result;
 	}
-	function isNonTerminal(A)
-	{
+	function isNonTerminal(A){
 		var result = false;
-		for(var v in variables)
-		{
-			if(variables[v]==A)
-			{
+		for(var v in variables){
+			if(variables[v]===A){
 				result = true;
 				break;
 			}
 		}
 		return result;
 	}
-	function isTerminal(a)
-	{
+	function isTerminal(a){
 		var result = false;
 		var terms = Object.keys(terminals);
-		for(var t in terms)
-		{
-			if(a.match(new RegExp(terminals[terms[t]]))!=null)
-			{
+		for(var t in terms){
+			if(a.match(new RegExp(terminals[terms[t]]))!==null){
 				result = true;
 				break;
 			}
@@ -105,52 +82,42 @@ function jsCI(terms, symbol, rules)
 		return result;
 	}
 
-	function production(A, a)
-	{
+	function production(A, a){
 		var indicatedRule;
 		var epsilonRule;
 
 		var choices = grammar[A];
-		for(var r in choices)
-		{
-			try
-			{
+		for(var r in choices){
+			try{
 				var firstTokens = first(choices[r].rule);	//rhs
-				for(var t in firstTokens)
-				{
-					if(firstTokens[t]=="&")
+				for(var t in firstTokens){
+					if(firstTokens[t]==="&")
 						epsilonRule = choices[r];
-					if(match(a, firstTokens[t]))
-					{
+					if(match(a, firstTokens[t])){
 						indicatedRule = choices[r];
 						break;
 					}
 				}
 			}
-			catch(e)
-			{
-				wshAlert(e);
+			catch(e){
+				console.error(e);
 			}
 
-			if(indicatedRule)
-			{
+			if(indicatedRule){
 				break;
 			}
 
 			var followTokens = follow(A);	// can be end of input symbol
-			for(var t in followTokens)
-			{
-				if(followTokens[t]=="&")		// may be wrong
+			for(var t in followTokens){
+				if(followTokens[t]==="&")		// may be wrong
 					epsilonRule = choices[r];
-				if(match(a, followTokens[t]))
-				{
+				if(match(a, followTokens[t])){
 					indicatedRule = choices[r];
 					break;
 				}
 			}
 		}
-		if(!indicatedRule)
-		{
+		if(!indicatedRule){
 			indicatedRule = epsilonRule;
 		}
 
@@ -162,31 +129,25 @@ function jsCI(terms, symbol, rules)
 	*	A - consequent of a grammar rule
 	*	return - an array
 	*/
-	function first(A)
-	{
-		var elements = new Array();
+	function first(A){
+		var elements = [];
 		var a = A[0];
 
-		if(isNonTerminal(a))
-		{
+		if(isNonTerminal(a)){
 			var firstRules = grammar[a];
-			for(var r in firstRules)
-			{
+			for(var r in firstRules){
 				var a2;
-				for(var i=0; i<firstRules[r].rule.length; ++i)
-				{
+				for(var i=0; i<firstRules[r].rule.length; ++i){
 					a2 = first(firstRules[r].rule.slice(i));
-					if(a2[0] != "&")
+					if(a2[0] !== "&")
 						break;
 				}
-				for(var i in a2)
-				{
+				for(var i in a2){
 					elements.push(a2[i]);
 				}
 			}
 		}
-		else if(isTerminal(a))
-		{
+		else if(isTerminal(a)){
 			elements.push(a);
 		}
 		else
@@ -200,27 +161,22 @@ function jsCI(terms, symbol, rules)
 	*	A - a non-terminal
 	*	return - an array
 	*/
-	function follow(A)
-	{
-		var elements = new Array();
+	function follow(A){
+		var elements = [];
 
-		if(A == start)
+		if(A === start)
 			elements.push(endofinput);
-		else
-		{
-			for(var v in variables)
-			{
+		else{
+			for(var v in variables){
 				var choices = grammar[variables[v]];
 				for(var r in choices)
-				for(var i=0; i<choices[r].rule.length-1; ++i)
-				{
-					if(choices[r].rule[i] != A)
+				for(var i=0; i<choices[r].rule.length-1; ++i){
+					if(choices[r].rule[i] !== A)
 						continue;
 					var followTokens = first(choices[r].rule.slice(i+1));
 					if(followTokens.length === 0)
 						followTokens = follow(variables[v]);
-					for(var f in followTokens)
-					{
+					for(var f in followTokens){
 						elements.push(followTokens[f]);
 					}
 					break;
@@ -231,52 +187,43 @@ function jsCI(terms, symbol, rules)
 		return elements;
 	}
 
-// public
-	this.compile = function(sSource)
-	{
+	this.compile = function(sSource){
 		var output;
 		var scanner = new jsScanner(sSource);
-		var parseStack = new Array();
-		var semanticStack = new Array();
+		var parseStack = [];
+		var semanticStack = [];
 
 		var keys = Object.keys(terminals);
 		for(var t in keys)
 			scanner.addToken(keys[t], terminals[keys[t]]);
 		parseStack.push(start);
 
-		while(scanner.hasNext())
-		{
+		while(scanner.hasNext()){
 			var A = parseStack.pop();
-			if(A=="&")
+			if(A==="&")
 				continue;
-			if(isNonTerminal(A))
-			{
+			if(isNonTerminal(A)){
 				var move = production(A, scanner.curToken);
-				if(move === undefined)
-				{
+				if(move === undefined){
 					throw "Parse error: no rule for "+A;
 				}
-				for(var i=move.rule.length-1;i>=0;--i)
-				{
+				for(var i=move.rule.length-1;i>=0;--i){
 					parseStack.push(move.rule[i]);
 				}
 				semanticStack.push(move.semantics);
 			}
-			else if(isTerminal(A) && match(scanner.curToken, terminals[A]))	// goofy hack to handle overlapping patterns
-			{
+			else if(isTerminal(A) && match(scanner.curToken, terminals[A])){	// goofy hack to handle overlapping patterns
 				semanticStack.push(scanner.curToken);
 				scanner.next();
 			}
 			else
 				throw "Parse error: syntax error near "+A;
 		}
-		while(parseStack.length > 0)
-		{
+		while(parseStack.length > 0){
 			var A = parseStack.pop();
-			if(A=="&")
+			if(A==="&")
 				continue;
-			if(isNonTerminal(A))
-			{
+			if(isNonTerminal(A)){
 				var move = production(A, endofinput);
 				if(move === undefined)
 					throw "Parse error: no rule for "+A;
@@ -298,8 +245,7 @@ function jsCI(terms, symbol, rules)
 		return output;
 	};
 
-	this.toString = function()
-	{
+	this.toString = function(){
 		var output = "Terminals:\\n";
 		var keys = Object.keys(terminals);
 		for(var t in keys)
