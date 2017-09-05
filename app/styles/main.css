@@ -1,0 +1,45 @@
+body {
+  background: #fafafa;
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #333;
+}
+
+/*global*/
+#terminal{
+	font-family: monospace;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+}
+.terminal{
+    --color: lightgreen;
+    --background: #0A110A;
+}
+
+#aceEditor {
+	position: absolute;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	font-size: 14px;
+	color: lightgreen;
+    background-color: #0A110A;
+}
+
+/*.cmd{
+	background-color: rgba(32,32,32,0) !important;
+}*/
+/*overriding bower_components/jquery.terminal/css/jquery.terminal.css*/
+/*@keyframes terminal-blink {
+  0%, 100% {
+      background-color: rgba(32,32,32,0);
+      color: #aaa;
+  }
+  50% {
+      background-color: #bbb; /* not #aaa because it's seems there is Google Chrome bug */
+      /*color: #0A110A;
+  }
+}*/

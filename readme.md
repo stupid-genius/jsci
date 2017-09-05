@@ -14,4 +14,4 @@ TODO:
 
 Demo:
 ============
-http://stupid-genius.com/jsci/compiler.html
+<a href="http://runnable.com/U2nMcy_2ccENMTyU/javascript-compiler-interpreter-for-jsci" target="_blank"><img src="https://runnable.com/external/styles/assets/runnablebtn.png" style="width:67px;height:25px;"></a>
