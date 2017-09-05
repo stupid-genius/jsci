@@ -1,0 +1,225 @@
+{
+	"start": "program",
+	"tokens": {
+		"IF": "if",
+		"THEN": "then",
+		"ELSE": "else",
+		"END": "end",
+		"REPEAT": "repeat",
+		"UNTIL": "until",
+		"READ": "read",
+		"WRITE": "write",
+		"ADD": "\\+",
+		"SUB": "\\-",
+		"MUL": "\\*",
+		"DIV": "\\/",
+		"LP": "\\(",
+		"RP": "\\)",
+		"EQ": "\\=",
+		"LT": "<",
+		"GT": ">",
+		"QT": "\\\"",
+		"EOS": ";",
+		"ASSIGN": ":\\=",
+		"$NUMBER": "[0-9]+",
+		"$IDENTIFIER": "[a-zA-Z]+",
+		"$TEXT": "[^\"]+",
+		"&": "&"
+	},
+	"productions": {
+		"program": [
+			{
+				"rule": ["stmt_sequence"],
+				"semantics": "return stack.shift()(stack);"
+			}
+		],
+		"stmt_sequence": [
+			{
+				"rule": ["statement", "_stmt_sequence"],
+				"semantics": "var stmt = stack.shift(); var out = stmt(stack); var stmtSeq = stack.shift(); out += stmtSeq(stack); return out;"
+			}
+		],
+		"_stmt_sequence": [
+			{
+				"rule": ["EOS", "statement", "_stmt_sequence"],
+				"semantics": "stack.shift(); var stmt = stack.shift(); var out = stmt(stack); var stmtSeq = stack.shift(); out += stmtSeq(stack); return out;"
+			},
+			{
+				"rule": ["&"],
+				"semantics": "return '';"
+			}
+		],
+		"statement": [
+			{
+				"rule": ["if_stmt"],
+				"semantics": "return stack.shift()(stack);"
+			},
+			{
+				"rule": ["repeat_stmt"],
+				"semantics": "return stack.shift()(stack) + ';';"
+			},
+			{
+				"rule": ["assign_stmt"],
+				"semantics": "return stack.shift()(stack) + ';';"
+			},
+			{
+				"rule": ["read_stmt"],
+				"semantics": "return stack.shift()(stack) + ';';"
+			},
+			{
+				"rule": ["write_stmt"],
+				"semantics": "return stack.shift()(stack) + ';';"
+			}
+		],
+		"if_stmt": [
+			{
+				"rule": ["IF", "exp", "THEN", "stmt_sequence", "_if_stmt"],
+				"semantics": "stack.shift(); var out = 'if'; var exp = stack.shift(); out += '(' + exp(stack) + ')'; stack.shift(); var stmtSeq = stack.shift(); out += '{' + stmtSeq(stack) + '}'; var ifStmt = stack.shift(); out += ifStmt(stack); return out;"
+			}
+		],
+		"_if_stmt": [
+			{
+				"rule": ["END"],
+				"semantics": "stack.shift(); return '';"
+			},
+			{
+				"rule": ["ELSE", "stmt_sequence", "END"],
+				"semantics": "stack.shift(); var out = 'else'; var stmtSeq = stack.shift(); out += '{' + stmtSeq(stack) + '}'; stack.shift(); return out;"
+			}
+		],
+		"repeat_stmt": [
+			{
+				"rule": ["REPEAT", "stmt_sequence", "UNTIL", "exp"],
+				"semantics": "stack.shift(); var out = 'do'; var stmtSeq = stack.shift(); out += '{' + stmtSeq(stack) + '}'; stack.shift(); out += 'while'; var exp = stack.shift(); out += '(!(' + exp(stack) + '))'; return out;"
+			}
+		],
+		"assign_stmt": [
+			{
+				"rule": ["$IDENTIFIER", "ASSIGN", "exp"],
+				"semantics": "var out = stack.shift() + '='; stack.shift(); var exp = stack.shift(); out += exp(stack); return out;"
+			}
+		],
+		"read_stmt": [
+			{
+				"rule": ["READ", "$IDENTIFIER"],
+				"semantics": "stack.shift(); return stack.shift() + '=prompt(\\'input: \\')';"
+			}
+		],
+		"write_stmt": [
+			{
+				"rule": ["WRITE", "exp"],
+				"semantics": "stack.shift(); var out = 'this.stdout'; var exp = stack.shift(); out += '(' + exp(stack) + ')'; return out;"
+			}
+		],
+		"exp": [
+			{
+				"rule": ["simple_exp", "_exp"],
+				"semantics": "var simpexp = stack.shift(); var out = simpexp(stack); var exp = stack.shift(); out += exp(stack); return out;"
+			},
+			{
+				"rule": ["QT", "string"],
+				"semantics": "var out = stack.shift(); var string = stack.shift(); out += string(stack); return out;"
+			}
+		],
+		"string": [
+			{
+				"rule": ["$TEXT", "string"],
+				"semantics": "var out = stack.shift(); var string = stack.shift(); var temp = string(stack); if(temp != '\"') out += ' '; out += temp; return out;"
+			},
+			{
+				"rule": ["QT"],
+				"semantics": "return stack.shift();"
+			}
+		],
+		"_exp": [
+			{
+				"rule": ["comparison_op", "simple_exp", "_exp"],
+				"semantics": "var compOp = stack.shift(); var out = compOp(stack); var simpexp = stack.shift(); out += simpexp(stack); var exp = stack.shift(); out += exp(stack); return out;"
+			},
+			{
+				"rule": ["&"],
+				"semantics": "return '';"
+			}
+		],
+		"comparison_op": [
+			{
+				"rule": ["GT"],
+				"semantics": "return stack.shift();"
+			},
+			{
+				"rule": ["LT"],
+				"semantics": "return stack.shift();"
+			},
+			{
+				"rule": ["EQ"],
+				"semantics": "stack.shift(); return '==';"
+			}
+		],
+		"simple_exp": [
+			{
+				"rule": ["term", "_simple_exp"],
+				"semantics": "var term = stack.shift(); var out = term(stack); var simpexp = stack.shift(); out += simpexp(stack); return out;"
+			}
+		],
+		"_simple_exp": [
+			{
+				"rule": ["addop", "term", "_simple_exp"],
+				"semantics": "var addop = stack.shift(); var out = addop(stack); var term = stack.shift(); out += term(stack); var simpexp = stack.shift(); out += simpexp(stack); return out;"
+			},
+			{
+				"rule": ["&"],
+				"semantics": "return '';"
+			}
+		],
+		"addop": [
+			{
+				"rule": ["ADD"],
+				"semantics": "return stack.shift();"
+			},
+			{
+				"rule": ["SUB"],
+				"semantics": "return stack.shift();"
+			}
+		],
+		"term": [
+			{
+				"rule": ["factor", "_term"],
+				"semantics": "var factor = stack.shift(); var out = factor(stack); var term = stack.shift(); out += term(stack); return out;"
+			}
+		],
+		"_term": [
+			{
+				"rule": ["mulop", "factor", "_term"],
+				"semantics": "var mulop = stack.shift(); var out = mulop(stack); var factor = stack.shift(); out += factor(stack); var term = stack.shift(); out += term(stack); return out;"
+			},
+			{
+				"rule": ["&"],
+				"semantics": "return '';"
+			}
+		],
+		"mulop": [
+			{
+				"rule": ["MUL"],
+				"semantics": "return stack.shift();"
+			},
+			{
+				"rule": ["DIV"],
+				"semantics": "return stack.shift();"
+			}
+		],
+		"factor": [
+			{
+				"rule": ["LP", "exp", "RP"],
+				"semantics": "var out = stack.shift(); var exp = stack.shift(); out += exp(stack); out += stack.shift(); return out;"
+			},
+			{
+				"rule": ["$NUMBER"],
+				"semantics": "return stack.shift();"
+			},
+			{
+				"rule": ["$IDENTIFIER"],
+				"semantics": "return stack.shift();"
+			}
+		]
+	}
+}

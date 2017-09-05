@@ -1,0 +1,14 @@
+{
+  "name": "terminal",
+  "private": true,
+  "dependencies": {
+    "jquery": "^3.2.1",
+    "jquery.terminal": "^1.5.0",
+    "angular": "^1.6.5",
+    "ace-builds": "^1.2.8"
+  },
+  "devDependencies": {
+    "chai": "^4.1.0",
+    "mocha": "^3.4.2"
+  }
+}
