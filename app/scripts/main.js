@@ -219,7 +219,7 @@ var commandRegistry = function(DocumentService, builtin){
 terminalModule.factory('commandRegistry', ['DocumentService', 'BuiltinDocuments', commandRegistry]);
 
 servicesModule.value('DocumentRoot', 'DocumentService:/');
-servicesModule.value('BuiltinDocuments', ';grammar.tiny;example.tiny');
+servicesModule.value('BuiltinDocuments', ';grammar.tiny;example.tiny;readme.md');
 servicesModule.service('FileService', function(){
 	this.get = function(name){
 		return $.ajax({
