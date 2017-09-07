@@ -121,11 +121,12 @@ function Executor(registry, DocumentService){
 }
 var commandRegistry = function(DocumentService, builtin){
 	var registry = {
-		cas: function(){
-			return 'Computer Algebra System';
-		},
-		echo: function(){
-			return [].slice.call(arguments).join(' ');
+		cat: function(){
+			if(arguments.length<1){
+				return 'usage: cat <filename>';
+			}
+			var doc = DocumentService.read(arguments[0]);
+			return doc;
 		},
 		help: function(){
 			return Object.keys(registry);
