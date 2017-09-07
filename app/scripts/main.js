@@ -223,7 +223,7 @@ servicesModule.value('BuiltinDocuments', ';grammar.tiny;example.tiny;readme.md')
 servicesModule.service('FileService', function(){
 	this.get = function(name){
 		return $.ajax({
-			url: '/scripts/'+name,
+			url: '/files/'+name,
 			async: false,
 		}).responseText;
 	};
