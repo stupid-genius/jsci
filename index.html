@@ -1,0 +1,8 @@
+<!DOCTYPE html> <html ng-app=TerminalModule> <head> <meta charset=utf-8> <title>terminal</title> <meta name=description content=""> <meta name=viewport content="width=device-width,initial-scale=1"> <link rel="shortcut icon" href=/favicon.b25e58c4.ico> <link rel=apple-touch-icon href=/apple-touch-icon.9727d3c2.png> <!-- Place favicon.ico and apple-touch-icon.png in the root directory --> <link rel=stylesheet href=styles/vendor.6a1e3a5a.css> <link rel=stylesheet href=styles/main.f0889093.css>  <body ng-controller=ConsoleController> <!--[if lt IE 10]>
+      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+    <![endif]--> <div id=terminal ng-show=!mode></div> <div id=aceEditor ng-show="mode==='editor'"></div> <script src=scripts/vendor.e019cb33.js></script> <script src=scripts/ace-builds/src-min/ace.js></script> <script src=scripts/ace-builds/src-min/theme-terminal.js></script> <script src=scripts/jquery.terminal/js/jquery.terminal.min.js></script> <script src=scripts/jquery.terminal/js/jquery.mousewheel-min.js></script> <script src=scripts/main.2d449200.js></script> <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. --> <script>/* (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+      function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+      e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+      e.src='https://www.google-analytics.com/analytics.js';
+      r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+      ga('create','UA-XXXXX-X');ga('send','pageview');*/</script>  
