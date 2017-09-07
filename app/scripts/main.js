@@ -9,7 +9,7 @@ terminalModule.controller('ConsoleController', ['$scope', 'ExecutorService', 'Do
 	var settings = {
 		prompt: '> ',
 		name: 'terminal',
-		greetings: 'stupid-genius.com'
+		greetings: 'JavaScript Compiler Interpreter'
 		/*keypress: function(e) {
 			if (e.which === 96) {
 				// return false;
@@ -42,6 +42,7 @@ terminalModule.controller('ConsoleController', ['$scope', 'ExecutorService', 'Do
 					}
 				}
 				editor.setSession(ace.createEditSession(doc));
+				editor.getSession().setUseWrapMode(true);
 				// editor.focus();	// this seems to cause the terminal to focus as well
 			default:
 				term.resume();
